@@ -2,7 +2,6 @@
 
 GAC.WMS is a .NET 9-based Warehouse Management System designed to streamline warehouse operations, including order processing, customer management, and integration with external systems.
 
----
 ## Clean Architecture
 
 This project follows the principles of **Clean Architecture**, which emphasizes:
@@ -24,31 +23,31 @@ This project follows the principles of **Clean Architecture**, which emphasizes:
 3. **Infrastructure Layer**:
    - Handles external concerns such as database access, background jobs, and authentication.
    - Uses libraries like `EntityFrameworkCore` and `Hangfire`.
-
-4. **Presentation Layer** (Future Scope):
-   - Responsible for user interaction (e.g., API or UI).
-
----
-## Features
-
-- **Order Management**: Create, retrieve, update, and delete sale and purchase orders.
-- **Customer Management**: Manage customer details and their associated orders.
-- **Integration Models**: Support for file-based integrations with external systems.
-- **Background Jobs**: Process tasks asynchronously using Hangfire.
-- **Unit Testing**: Comprehensive test coverage for application services.
-
----
+   *** Persistance Layer *** :
+   - Responsible for data storage.
 
 ## Project Structure
 
 ### 1. **GAC.WMS.Application**
 - Contains business logic and integration models.
+- ***Folders structure***
+     - Interfaces
+     - Dto's
+     - Input validation
+     - Mapping of objects
 - Key Libraries:
   - `AutoMapper` for object mapping.
   - `FluentValidation` for input validation.
 
 ### 2. **GAC.WMS.Infrastructure**
 - Manages database access and external service integrations.
+-  ***Folder structure***
+     - File parser (XML,CSV etc)
+     - Integration of cron job in system
+     - Job
+     - Mapping of objects xml to dto
+     - Persistance layer with EF core
+     - Services implimentation 
 - Key Libraries:
   - `EntityFrameworkCore` for database interactions.
   - `Hangfire` for background job processing.
@@ -56,8 +55,12 @@ This project follows the principles of **Clean Architecture**, which emphasizes:
 
 ### 3. **GAC.WMS.Domain**
 - Defines core domain entities such as `SaleOrder`, `Customer`, and `Product`.
+- ***Folder structure***
+   - Entities
+   - Enums
+   - Exceptions
 
-### 4. **GAC.WMS.IntegrationEngine**
+### 4. **GAC.WMS.IntegrationEngine (Cron Job)**
 1. **File Processing and Dispatching**:
    - The `IntegrationDispatcher` class is responsible for scanning a specified directory for files and delegating their processing to appropriate handlers (`IIntegrationHandler` implementations).
    - This enables the system to dynamically handle different types of files based on the logic defined in the handlers.
@@ -79,7 +82,9 @@ This project follows the principles of **Clean Architecture**, which emphasizes:
   - `MSTest` for testing.
   - `Moq` for mocking dependencies.
   - `EntityFrameworkCore.InMemory` for in-memory database testing.
----
+  - ***Folder structure***
+    - Application.Tests
+
 ## Prerequisites
 
 Before running the application, ensure the following are installed on your system:
@@ -90,7 +95,7 @@ Before running the application, ensure the following are installed on your syste
 2. **PowerShell**: Required for running dockerdeploy.ps1 script.
    - [Install PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
    - Verify installation: pwsh --version
----
+
 ## Installation
 1. Create folder in C drive "C:\SharedFolder"
 2. Add any number of customer folder (Customer1, Customer2....)
@@ -103,9 +108,9 @@ Before running the application, ensure the following are installed on your syste
 7. Navigate to the solution directory:
 8. Open power shell in root directory where dockerdeploy.ps1 is present
 9. Execute dockerdeploy.ps1.(Docker desktop must be up and running)
-   -This script build project
-   -Run unit test cases
-   -Create sql server image and run migration (add test data as well)
+   - This script build project
+   - Run unit test cases
+   - Create sql server image and run migration (add test data as well)
    -Deploy application.
 10. Accsess API using URL : [http://localhost:8080](http://localhost:8080) (using postman).
 11. Access [Hanfire dashbord URL:[http://localhost:8080/jobs](http://localhost:8080/jobs)
