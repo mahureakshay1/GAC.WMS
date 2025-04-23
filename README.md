@@ -75,6 +75,14 @@ This project follows the principles of **Clean Architecture**, which emphasizes:
 4. **Error and Success Handling**:
    - The `IIntegrationHandler` interface includes methods for handling errors (`HandleError`) and successes (`HandleSuccess`), ensuring robust and traceable file processing.
 
+### 5. **GAC.WMS.Api**
+- Provides controllers async methods.
+- Rate limiter (Token bucket)
+- Jwt token authentication
+- Exception middleware
+- ***Folder structure***
+    - Controllers
+    - Middleware
 
 ### 5. **GAC.WMS.UnitTests**
 - Provides unit tests for application and infrastructure layers.
