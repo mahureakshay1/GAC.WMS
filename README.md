@@ -120,10 +120,11 @@ Before running the application, ensure the following are installed on your syste
    - Run unit test cases
    - Create sql server image and run migration (add test data as well)
    -Deploy application.
-10. Accsess API using URL : [http://localhost:8080](http://localhost:8080) (using postman).
-11. Access [Hanfire dashbord URL:[http://localhost:8080/jobs](http://localhost:8080/jobs)
-12. Access Swagger UI URL: [http://localhost:8080/swagger/index.html]([http://localhost:8080/jobs](http://localhost:8080/swagger/index.html))
-13. Copy xml files prent in docuemnts folder of solution into "C:\SharedFolder\Customer"
+10. Check both container db-1 and server-1 inside gacwms are running or not if server-1 not running manualy run it.
+11. Accsess API using URL : [http://localhost:8080](http://localhost:8080) (using postman).
+12. Access [Hanfire dashbord URL:[http://localhost:8080/jobs](http://localhost:8080/jobs)
+13. Access Swagger UI URL: [http://localhost:8080/swagger/index.html]([http://localhost:8080/jobs](http://localhost:8080/swagger/index.html))
+14. Copy xml files prent in docuemnts folder of solution into "C:\SharedFolder\Customer1\"
     - Job process those file one by one and move to Success folder or into Error folder depending opon operation result.
 
 
