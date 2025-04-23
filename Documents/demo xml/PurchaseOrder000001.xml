@@ -1,0 +1,19 @@
+<PurchaseOrder>
+  <ProcessingDate>2025-04-20T14:30:00</ProcessingDate>
+  <CustomerId>3</CustomerId>
+  <Status>1</Status>
+  <PurchaseOrderLines>
+    <PurchaseOrderLine>
+      <ProductId>1</ProductId>
+      <Quantity>2</Quantity>
+      <UnitPrice>50.00</UnitPrice>
+      <TotalPrice>100.00</TotalPrice>
+    </PurchaseOrderLine>
+    <PurchaseOrderLine>
+      <ProductId>2</ProductId>
+      <Quantity>1</Quantity>
+      <UnitPrice>75.00</UnitPrice>
+      <TotalPrice>75.00</TotalPrice>
+    </PurchaseOrderLine>
+  </PurchaseOrderLines>
+</PurchaseOrder>

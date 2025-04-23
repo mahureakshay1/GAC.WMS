@@ -1,0 +1,36 @@
+services:
+  server:
+    build:
+      context: .
+      target: final
+    ports:
+      - "8080:8080"
+    volumes:
+      - /run/desktop/mnt/host/c/SharedFolder:/app/shared
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=GacWms;User Id=sa;Password=Akshay@123!;TrustServerCertificate=True;
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Akshay@123!
+      - MSSQL_PID=Developer
+    volumes:
+      - db-data:/var/opt/mssql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+   
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ["CMD", "sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Akshay@123!", "-Q", "SELECT 1"]
+      interval: 20s
+      retries: 10
+      timeout: 5s
+
+volumes:
+  db-data:

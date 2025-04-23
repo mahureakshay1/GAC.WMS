@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.13.35913.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		GAC.WMS.Api\Dockerfile = GAC.WMS.Api\Dockerfile
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EC02A560-5B64-41E7-9044-AEE28F0C7C3E}"
 EndProject
@@ -16,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GAC.WMS.Infrastructure", "GAC.WMS.Infrastructure\GAC.WMS.Infrastructure.csproj", "{AA8725FA-F42A-4D9F-A533-5C646CC42C6E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GAC.WMS.UnitTests", "GAC.WMS.UnitTests\GAC.WMS.UnitTests.csproj", "{41D7EF14-B553-4794-BF87-07553C1CA2DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GAC.WMS.IntegrationEngine", "GAC.WMS.IntegrationEngine\GAC.WMS.IntegrationEngine.csproj", "{857EAFC1-A330-40B1-A6D8-5462748313F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +49,10 @@ Global
 		{41D7EF14-B553-4794-BF87-07553C1CA2DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41D7EF14-B553-4794-BF87-07553C1CA2DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41D7EF14-B553-4794-BF87-07553C1CA2DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{857EAFC1-A330-40B1-A6D8-5462748313F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{857EAFC1-A330-40B1-A6D8-5462748313F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{857EAFC1-A330-40B1-A6D8-5462748313F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{857EAFC1-A330-40B1-A6D8-5462748313F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +63,7 @@ Global
 		{1E7CFE8C-B433-43CB-AB9E-6B755D8D6671} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{AA8725FA-F42A-4D9F-A533-5C646CC42C6E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{41D7EF14-B553-4794-BF87-07553C1CA2DA} = {EC02A560-5B64-41E7-9044-AEE28F0C7C3E}
+		{857EAFC1-A330-40B1-A6D8-5462748313F7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6C62C3D2-EA69-4BF6-A9B5-61D34980136A}
