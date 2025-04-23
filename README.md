@@ -87,6 +87,9 @@ git clone https://github.com/mahureakshay1/GAC.WMS.git
    - Start SQL Server container & run EF Core migrations
    - Deploy the API
 8. Check docker containers **gacwms-db-1** and **gacwms-srver-1** is running or not if not running, run manually.
+9. If both containers are running, verify xml files are processed, that are copied in step 4.
+   - Go to path "C:\SharedFolder\Customer1\" files should be moved to **Success** folder if processed succusfully or **Error** folder.
+   - Logs information is available in **gacwms-srver-1** container log.
 
 ---
 
