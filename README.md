@@ -1,6 +1,6 @@
 # GAC's Warehouse Management System
 
-GAC.WMS is a .NET 9-based Warehouse Management System designed to streamline warehouse operations, including order processing, customer management, and integration with external systems. The solution is modular, with separate projects for application logic, infrastructure, domain entities, and unit testing.
+GAC.WMS is a .NET 9-based Warehouse Management System designed to streamline warehouse operations, including order processing, customer management, and integration with external systems.
 
 ---
 ## Clean Architecture
@@ -107,7 +107,14 @@ Before running the application, ensure the following are installed on your syste
    -Run unit test cases
    -Create sql server image and run migration (add test data as well)
    -Deploy application.
-10. you can accsess API using URL : http://localhost:8080 (using postman).
+10. Accsess API using URL : [http://localhost:8080](http://localhost:8080) (using postman).
+11. Access [Hanfire dashbord URL:[http://localhost:8080/jobs](http://localhost:8080/jobs)
+12. Access Swagger UI URL: [http://localhost:8080/swagger/index.html]([http://localhost:8080/jobs](http://localhost:8080/swagger/index.html))
+13. Copy xml files prent in docuemnts folder of solution into "C:\SharedFolder\Customer"
+    - Job process those file one by one and move to Success folder or into Error folder depending opon operation result.
+
+
+
    
     
    
