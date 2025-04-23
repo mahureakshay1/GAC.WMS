@@ -1,134 +1,132 @@
-# GAC's Warehouse Management System
+# 🚚 GAC Warehouse Management System (GAC.WMS)
 
-GAC.WMS is a .NET 9-based Warehouse Management System designed to streamline warehouse operations, including order processing, customer management, and integration with external systems.
+**GAC.WMS** is a modern, extensible, and high-performance **Warehouse Management System** built with **.NET 9**, designed to streamline operations such as order processing, customer handling, and integration with external systems.
 
-## Clean Architecture
+---
 
-This project follows the principles of **Clean Architecture**, which emphasizes:
+### 🌟 Features
 
-1. **Separation of Concerns**: Divides the system into layers, each with a specific responsibility.
-2. **Dependency Inversion**: High-level modules do not depend on low-level modules. Both depend on abstractions.
-3. **Testability**: Each layer can be tested independently.
+- 💡 **Extensible & Configurable**: Easily adaptable for new customers.
+- ⏰ **CRON-Based Job Scheduling**: Background job execution with customizable frequency.
+- 🔁 **Robust Retry Logic**: Automatic retries for failed jobs to ensure data consistency.
+- 🚀 **Rate Limiting & Async Support**: Handles high-volume traffic smoothly.
+- 🔐 **JWT Authentication & Secure APIs**.
 
-### Layers in the Project
+---
 
-1. **Domain Layer**:
-   - Contains core business logic and entities such as `SaleOrder`, `Customer`, and `Product`.
-   - Independent of any external frameworks or technologies.
+## 🧱 Clean Architecture
 
-2. **Application Layer**:
-   - Contains use cases and business rules.
-   - Includes services like `SaleOrderService` and DTOs like `SellOrderDto`.
+This solution embraces **Clean Architecture** principles to ensure testability, maintainability, and separation of concerns.
 
-3. **Infrastructure Layer**:
-   - Handles external concerns such as database access, background jobs, and authentication.
-   - Uses libraries like `EntityFrameworkCore` and `Hangfire`.
-   *** Persistance Layer *** :
-   - Responsible for data storage.
+### Layers
 
-## Project Structure
+1. **Domain** - Core business entities (`Customer`, `Product`, `SaleOrder`) and logic.
+2. **Application** - Use cases, services, DTOs, and validation logic.
+3. **Infrastructure** - EF Core data access, Hangfire job processing, external system integration.
+4. **API** - Web API controllers, middleware, authentication, and request rate-limiting.
+5. **Integration Engine** - Handles file-based data ingestion via CRON jobs.
 
-### 1. **GAC.WMS.Application**
-- Contains business logic and integration models.
-- ***Folders structure***
-     - Interfaces
-     - Dto's
-     - Input validation
-     - Mapping of objects
-- Key Libraries:
-  - `AutoMapper` for object mapping.
-  - `FluentValidation` for input validation.
+---
 
-### 2. **GAC.WMS.Infrastructure**
-- Manages database access and external service integrations.
--  ***Folder structure***
-     - File parser (XML,CSV etc)
-     - Integration of cron job in system
-     - Job
-     - Mapping of objects xml to dto
-     - Persistance layer with EF core
-     - Services implimentation 
-- Key Libraries:
-  - `EntityFrameworkCore` for database interactions.
-  - `Hangfire` for background job processing.
-  - `Microsoft.AspNetCore.Authentication.JwtBearer` for authentication.
+## 🗂️ Project Structure
 
-### 3. **GAC.WMS.Domain**
-- Defines core domain entities such as `SaleOrder`, `Customer`, and `Product`.
-- ***Folder structure***
-   - Entities
-   - Enums
-   - Exceptions
+### 📁 GAC.WMS.Application
+- Business logic and DTOs
+- AutoMapper, FluentValidation, interfaces
 
-### 4. **GAC.WMS.IntegrationEngine (Cron Job)**
-1. **File Processing and Dispatching**:
-   - The `IntegrationDispatcher` class is responsible for scanning a specified directory for files and delegating their processing to appropriate handlers (`IIntegrationHandler` implementations).
-   - This enables the system to dynamically handle different types of files based on the logic defined in the handlers.
+### 📁 GAC.WMS.Infrastructure
+- File parsing (XML/CSV), job scheduling, services
+- EF Core, Hangfire, authentication
 
-2. **Extensibility via Handlers**:
-   - The use of the `IIntegrationHandler` interface allows for a plug-and-play architecture where new file types or processing logic can be added by implementing the interface.
-   - Handlers determine if they can process a file (`CanHandleAsync`) and then execute the processing logic (`ProcessAsync`).
+### 📁 GAC.WMS.Domain
+- Business entities, enums, and custom exceptions
 
-3. **Integration with External Systems**:
-   - By processing files, the `IntegrationEngine` facilitates communication with external systems, such as importing data into the application or exporting data for external use.
+### 📁 GAC.WMS.IntegrationEngine
+- Scans folders, dispatches files to appropriate handlers
+- Handles success and error scenarios robustly
 
-4. **Error and Success Handling**:
-   - The `IIntegrationHandler` interface includes methods for handling errors (`HandleError`) and successes (`HandleSuccess`), ensuring robust and traceable file processing.
+### 📁 GAC.WMS.Api
+- Controllers with async endpoints
+- Middleware, JWT authentication, Swagger, rate-limiter
 
-### 5. **GAC.WMS.Api**
-- Provides controllers async methods.
-- Rate limiter (Token bucket)
-- Jwt token authentication
-- Exception middleware
-- ***Folder structure***
-    - Controllers
-    - Middleware
+### 📁 GAC.WMS.UnitTests
+- MSTest, Moq, and EF Core InMemory testing
+- Organized by feature/folder
 
-### 5. **GAC.WMS.UnitTests**
-- Provides unit tests for application and infrastructure layers.
-- Key Libraries:
-  - `MSTest` for testing.
-  - `Moq` for mocking dependencies.
-  - `EntityFrameworkCore.InMemory` for in-memory database testing.
-  - ***Folder structure***
-    - Application.Tests
+---
 
-## Prerequisites
+## ⚙️ Prerequisites
 
-Before running the application, ensure the following are installed on your system:
+- ✅ **Docker**: [Get Docker](https://docs.docker.com/get-docker/)
+- ✅ **PowerShell**: [Install PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
 
-1. **Docker**: Used for containerizing and running the application.
-   - [Install Docker](https://docs.docker.com/get-docker/)
-   - Verify installation:  docker --version
-2. **PowerShell**: Required for running dockerdeploy.ps1 script.
-   - [Install PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
-   - Verify installation: pwsh --version
+---
 
-## Installation
-1. Create folder in C drive "C:\SharedFolder"
-2. Add any number of customer folder (Customer1, Customer2....)
-   ![image](https://github.com/user-attachments/assets/2fbdaf88-1dc3-4f44-9e08-a58af1ef4e17)
-3. Share "SharedFolder" (parent to Customers folders) folder to everyone.
-   ![image](https://github.com/user-attachments/assets/de0735bc-9e8b-4f27-a138-9aadc1a14324)
-5. This customer1,customer2... folder contains XML files form customer to import in system (right now only xml support is implimented)
-   
-6. Clone the repository: git clone https://github.com/your-repo/GAC.WMS.git
-7. Navigate to the solution directory:
-8. Open power shell in root directory where dockerdeploy.ps1 is present
-9. Execute dockerdeploy.ps1.(Docker desktop must be up and running)
-   - This script build project
-   - Run unit test cases
-   - Create sql server image and run migration (add test data as well)
-   -Deploy application.
-10. Check both container db-1 and server-1 inside gacwms are running or not if server-1 not running manualy run it.
-11. Accsess API using URL : [http://localhost:8080](http://localhost:8080) (using postman).
-12. Access [Hanfire dashbord URL:[http://localhost:8080/jobs](http://localhost:8080/jobs)
-13. Access Swagger UI URL: [http://localhost:8080/swagger/index.html]([http://localhost:8080/jobs](http://localhost:8080/swagger/index.html))
-14. Copy xml files prent in docuemnts folder of solution into "C:\SharedFolder\Customer1\"
-    - Job process those file one by one and move to Success folder or into Error folder depending opon operation result.
+## 🛠️ Installation & Setup
 
+1. **Create shared directory**: `C:\SharedFolder`
+2. **Add customer folders**: `Customer1`, `Customer2`, etc.
+3. **Share folder**: Right-click → Properties → Share with "Everyone"
+4. **Copy XML files** from solution's document folder to C:\SharedFolder\Customer1\
+5. **Clone the repository**:
 
+```bash
+git clone https://github.com/mahureakshay1/GAC.WMS.git
+```
 
-   
-    
-   
+6. **Open PowerShell** in the root folder (where dockerdeploy.ps1 preset).
+7. **Run deployment script** (Make sure docker is up and running):
+
+```powershell
+.\dockerdeploy.ps1
+```
+
+   📦 This script will:
+   - Build the .NET 9 solution
+   - Run unit tests
+   - Start SQL Server container & run EF Core migrations
+   - Deploy the API
+8. Check docker containers **gacwms-db-1** and **gacwms-srver-1** is running or not if not running, run manually.
+
+---
+
+## 🌐 Access Endpoints
+
+- 🧪 Swagger: `http://localhost:8080/swagger/index.html`
+- 🛠️ Hangfire Dashboard: `http://localhost:8080/jobs`
+- 🔁 API (Postman, etc.): `http://localhost:8080`
+- 📂 Place your XML files under: `C:\SharedFolder\Customer1\`
+
+---
+
+## 🧾 Sample `appsettings.json`
+
+```json
+{
+  // Application section is use by Cron job for import 
+  "Application": {
+    "Url": "http://localhost",
+    "Port": 8080, // change port number to 44352 if running using visual studio
+    "Username": "admin",
+    "Password": "admin"
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=<SERVER_NAME>;Database=GacWms;User Id=sa;Password=<PASSWORD>;TrustServerCertificate=True;"
+  },
+  "JwtSettings": {
+    "Secret": "OgCOPWBPWideOqs-gmHPqjb6eJkxezLnF0mKZmG-r0o=",
+    "Issuer": "localhost",
+    "Audience": "localhost",
+    "ExpiresInMinutes": 60
+  },
+  "FileIntegration": {
+    "CronExpression": "<CRON_EXPRESSION>",
+    "Customers": [
+      { "Name": "Customer1", "Path": "/app/shared/Customer1" }, // Change this path \\<SERVER>\SharedFolder\Customer1 to if running on visual studio
+      { "Name": "Customer2", "Path": "/app/shared/Customer2" }, // Change this path \\<SERVER>\SharedFolder\Customer1to if running on visual studio
+    ]
+  }
+}
+```
+
+---
