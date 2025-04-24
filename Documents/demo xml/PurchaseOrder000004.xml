@@ -10,7 +10,7 @@
       <TotalPrice>1500.00</TotalPrice>
     </PurchaseOrderLine>
     <PurchaseOrderLine>
-      <ProductId>102</ProductId>
+      <ProductId>2</ProductId>
       <Quantity>30</Quantity>
       <UnitPrice>100.00</UnitPrice>
       <TotalPrice>3000.00</TotalPrice>
