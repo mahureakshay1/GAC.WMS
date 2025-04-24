@@ -7,7 +7,7 @@
       <ProductId>1</ProductId>
       <Quantity>20</Quantity>
       <UnitPrice>50.00</UnitPrice>
-      <TotalPrice>2000.00</TotalPrice>
+      <TotalPrice>1000.00</TotalPrice>
     </PurchaseOrderLine>
     <PurchaseOrderLine>
       <ProductId>102</ProductId>
