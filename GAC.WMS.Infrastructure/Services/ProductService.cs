@@ -20,25 +20,6 @@ namespace GAC.WMS.Infrastructure.Services
             _validator = validator;
         }
 
-        public async Task<ProductDto> CreateAsync(ProductDto dto, CancellationToken cancellationToken)
-        {
-            await _validator.ValidateAsync(dto, cancellationToken);
-            var entity = _mapper.Map<Product>(dto);
-            _dbContext.Set<Product>().Add(entity);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return _mapper.Map<ProductDto>(entity);
-        }
-
-        public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
-        {
-            var entity = await _dbContext.Set<Product>().FindAsync(new object[] { id }, cancellationToken);
-            if (entity == null)
-                throw new ItemNotFoundException(id);
-            _dbContext.Set<Product>().Remove(entity);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return true;
-        }
-
         public async Task<IEnumerable<ProductDto>> GetAllAsync(CancellationToken cancellationToken)
         {
             return await _dbContext.Set<Product>()
@@ -78,6 +59,24 @@ namespace GAC.WMS.Infrastructure.Services
             if (res == null)
                 throw new ItemNotFoundException(name);
             return res;
+        }
+        public async Task<ProductDto> CreateAsync(ProductDto dto, CancellationToken cancellationToken)
+        {
+            await _validator.ValidateAsync(dto, cancellationToken);
+            var entity = _mapper.Map<Product>(dto);
+            _dbContext.Set<Product>().Add(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return _mapper.Map<ProductDto>(entity);
+        }
+
+        public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
+        {
+            var entity = await _dbContext.Set<Product>().FindAsync(new object[] { id }, cancellationToken);
+            if (entity == null)
+                throw new ItemNotFoundException(id);
+            _dbContext.Set<Product>().Remove(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return true;
         }
     }
 }

@@ -77,15 +77,6 @@ namespace GAC.WMS.Infrastructure
                             OnMessageReceived = context =>
                             {
                                 Console.WriteLine("Token received.");
-                                var request = context.HttpContext.Request;
-                                if (request.Path.StartsWithSegments("/jobs"))
-                                {
-                                    var token = request.Query["token"];
-                                    if (!string.IsNullOrEmpty(token))
-                                    {
-                                        context.Token = token;
-                                    }
-                                }
                                 return Task.CompletedTask;
                             },
                             OnChallenge = context =>

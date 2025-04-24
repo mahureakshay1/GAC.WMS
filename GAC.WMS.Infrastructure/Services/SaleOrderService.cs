@@ -19,24 +19,6 @@ namespace GAC.WMS.Infrastructure.Services
             _mapper = mapper;
             _validator = validator;
         }
-        public async Task<SellOrderDto> CreateAsync(SellOrderDto dto, CancellationToken cancellationToken)
-        {
-            await _validator.ValidateAsync(dto, cancellationToken);
-            var entity = _mapper.Map<SaleOrder>(dto);
-            _dbContext.Set<SaleOrder>().Add(entity);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return _mapper.Map<SellOrderDto>(entity);
-        }
-
-        public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
-        {
-            SaleOrder? entity = _dbContext.Set<SaleOrder>().Find(id);
-            if (entity == null)
-                throw new ItemNotFoundException(id);
-            _dbContext.Set<SaleOrder>().Remove(entity);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return true;
-        }
 
         public async Task<IEnumerable<SellOrderDto>> GetAllAsync(CancellationToken cancellationToken)
         {
@@ -68,6 +50,25 @@ namespace GAC.WMS.Infrastructure.Services
             if (res == null)
                 throw new ItemNotFoundException(id);
             return res;
+        }
+
+        public async Task<SellOrderDto> CreateAsync(SellOrderDto dto, CancellationToken cancellationToken)
+        {
+            await _validator.ValidateAsync(dto, cancellationToken);
+            var entity = _mapper.Map<SaleOrder>(dto);
+            _dbContext.Set<SaleOrder>().Add(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return _mapper.Map<SellOrderDto>(entity);
+        }
+
+        public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
+        {
+            SaleOrder? entity = _dbContext.Set<SaleOrder>().Find(id);
+            if (entity == null)
+                throw new ItemNotFoundException(id);
+            _dbContext.Set<SaleOrder>().Remove(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return true;
         }
     }
 }
