@@ -17,7 +17,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.RateLimiting;
@@ -77,8 +76,16 @@ namespace GAC.WMS.Infrastructure
                             },
                             OnMessageReceived = context =>
                             {
-                                // Optional: Extract token from custom header or query
                                 Console.WriteLine("Token received.");
+                                var request = context.HttpContext.Request;
+                                if (request.Path.StartsWithSegments("/jobs"))
+                                {
+                                    var token = request.Query["token"];
+                                    if (!string.IsNullOrEmpty(token))
+                                    {
+                                        context.Token = token;
+                                    }
+                                }
                                 return Task.CompletedTask;
                             },
                             OnChallenge = context =>
