@@ -1,4 +1,4 @@
-# 🚚 GAC Warehouse Management System (GAC.WMS)
+# 🚚 GAC Warehouse Management System
 
 **GAC.WMS** is a modern, extensible, and high-performance **Warehouse Management System** built with **.NET 9**, designed to streamline operations such as order processing, customer handling, and integration with external systems.
 
@@ -90,6 +90,7 @@ git clone https://github.com/mahureakshay1/GAC.WMS.git
 9. If both containers are running, verify xml files are processed, that are copied in step 4.
    - Go to path "C:\SharedFolder\Customer1\" files should be moved to **Success** folder if processed succusfully or **Error** folder.
    - Logs information is available in **gacwms-srver-1** container log.
+10. Closing powershell window will stop container.
 
 ---
 
