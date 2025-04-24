@@ -83,7 +83,7 @@ git clone https://github.com/mahureakshay1/GAC.WMS.git
 ```
 
    📦 This script will:
-   - Build the .NET 9 solution
+   - Build the solution
    - Run unit tests
    - Start SQL Server container & run EF Core migrations
    - Deploy the API
