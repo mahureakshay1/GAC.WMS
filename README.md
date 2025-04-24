@@ -67,12 +67,13 @@ This solution embraces **Clean Architecture** principles to ensure testability, 
 1. **Create shared directory**: `C:\SharedFolder`
 2. **Add customer folders**: `Customer1`, `Customer2`, etc.
 3. **Share folder**: Right-click → Properties → Share with "Everyone"
-4. **Copy XML files** from solution's document folder to C:\SharedFolder\Customer1\
-5. **Clone the repository**:
+4. **Clone the repository**:
 
 ```bash
 git clone https://github.com/mahureakshay1/GAC.WMS.git
 ```
+5. **Copy XML files** from solution's document folder to C:\SharedFolder\Customer1\
+
 
 6. **Open PowerShell** in the root folder (where dockerdeploy.ps1 preset).
 7. **Run deployment script** (Make sure docker is up and running):
@@ -87,7 +88,7 @@ git clone https://github.com/mahureakshay1/GAC.WMS.git
    - Start SQL Server container & run EF Core migrations
    - Deploy the API
 8. Check docker containers **gacwms-db-1** and **gacwms-srver-1** is running or not if not running, run manually.
-9. If both containers are running, verify xml files are processed, that are copied in step 4.
+9. If both containers are running, verify xml files are processed, that are copied in step 5.
    - Go to path "C:\SharedFolder\Customer1\" files should be moved to **Success** folder if processed succusfully or **Error** folder.
    - Logs information is available in **gacwms-srver-1** container log.
 10. Closing powershell window will stop container.
