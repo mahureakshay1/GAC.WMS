@@ -18,25 +18,25 @@ namespace GAC.WMS.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<SellOrderDto>> Get(CancellationToken cancellationToken)
+        public async Task<IEnumerable<SaleOrderDto>> Get(CancellationToken cancellationToken)
         {
             return await _sellOrderService.GetAllAsync(cancellationToken);
         }
 
         [HttpGet("{id}")]
-        public async Task<SellOrderDto?> Get(int id, CancellationToken cancellationToken)
+        public async Task<SaleOrderDto?> Get(int id, CancellationToken cancellationToken)
         {
             return await _sellOrderService.GetByIdAsync(id, cancellationToken);
         }
 
         [HttpPost]
-        public async Task<SellOrderDto> Post([FromBody] SellOrderDto dto, CancellationToken cancellationToken)
+        public async Task<SaleOrderDto> Post([FromBody] SaleOrderDto dto, CancellationToken cancellationToken)
         {
             return await _sellOrderService.CreateAsync(dto, cancellationToken);
         }
 
         [HttpPut]
-        public async Task<SellOrderDto> Put(SellOrderDto dto, CancellationToken cancellationToken)
+        public async Task<SaleOrderDto> Put(SaleOrderDto dto, CancellationToken cancellationToken)
         {
             return await _sellOrderService.UpdateAsync(dto, cancellationToken);
         }

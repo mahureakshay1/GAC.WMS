@@ -3,7 +3,7 @@ namespace GAC.WMS.Infrastructure.Jobs.Token
 {
     public class TokenStore
     {
-        private string _token;
+        private string _token = null!;
         private DateTime _validTill;
 
         public void SetToken(string token, DateTime validTill)

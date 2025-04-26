@@ -12,14 +12,16 @@ namespace GAC.WMS.Infrastructure.Services
     public class PurchaseOrderService : IPurchaseOrderService
     {
         private readonly AppDbContext _dbContext;
-        private readonly IValidatorService<PurchaseOrderDto> _validator;
+        private readonly IValidatorService<PurchaseOrderDto> _orderValidator;
+        private readonly IValidatorService<PurchaseOrderLineDto> _orderLineValidator;
         private readonly IMapper _mapper;
         private readonly ILogger<IPurchaseOrderService> _logger;
-        public PurchaseOrderService(AppDbContext dbContext, IMapper mapper, IValidatorService<PurchaseOrderDto> validator , ILogger<IPurchaseOrderService> logger)
+        public PurchaseOrderService(AppDbContext dbContext, IMapper mapper, IValidatorService<PurchaseOrderDto> orderValidator, IValidatorService<PurchaseOrderLineDto> orderLineValidator, ILogger<IPurchaseOrderService> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
-            _validator = validator;
+            _orderValidator = orderValidator;
+            _orderLineValidator = orderLineValidator;
             _logger = logger;
         }
         public async Task<IEnumerable<PurchaseOrderDto>> GetAllAsync(CancellationToken cancellationToken)
@@ -55,7 +57,7 @@ namespace GAC.WMS.Infrastructure.Services
         }
         public async Task<PurchaseOrderDto> CreateAsync(PurchaseOrderDto dto, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAsync(dto, cancellationToken);
+            await _orderValidator.ValidateAsync(dto, cancellationToken);
             var entity = _mapper.Map<PurchaseOrder>(dto);
             _dbContext.Set<PurchaseOrder>().Add(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -65,10 +67,17 @@ namespace GAC.WMS.Infrastructure.Services
 
         public async Task<PurchaseOrderDto> UpdateAsync(PurchaseOrderDto dto, CancellationToken cancellationToken)
         {
+            await _orderLineValidator.ValidateAsync(dto.PurchaseOrderLines, cancellationToken);
             var entity = _mapper.Map<PurchaseOrder>(dto);
-            var existingEntity = await _dbContext.Set<PurchaseOrder>().FindAsync(new object[] { entity.Id }, cancellationToken);
+
+            var existingEntity = await _dbContext.Set<PurchaseOrder>()
+                .Include(SaleOrderDto => SaleOrderDto.PurchaseOrderLines)
+                .FirstOrDefaultAsync(x => x.Id == entity.Id, cancellationToken);
+
             if (existingEntity == null)
                 throw new ItemNotFoundException(dto.Id);
+
+            var newPurchaseOrderLine = new List<PurchaseOrderLine>();
 
             _dbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
 
@@ -77,14 +86,14 @@ namespace GAC.WMS.Infrastructure.Services
                 {
                     var existingLine = existingEntity.PurchaseOrderLines?.FirstOrDefault(l => l.Id == line.Id);
                     if (existingLine != null)
-                    {
                         _dbContext.Entry(existingLine).CurrentValues.SetValues(line);
-                    }
                     else
-                    {
-                        existingEntity.PurchaseOrderLines?.Add(line);
-                    }
+                        newPurchaseOrderLine.Add(line);
                 }
+
+            if (newPurchaseOrderLine.Count > 0)
+                existingEntity.PurchaseOrderLines?.AddRange(newPurchaseOrderLine);
+
             if (existingEntity.PurchaseOrderLines != null)
                 foreach (var line in existingEntity.PurchaseOrderLines)
                 {

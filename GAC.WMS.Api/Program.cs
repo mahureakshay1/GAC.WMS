@@ -54,7 +54,7 @@ var app = builder.Build();
 //Middleware configuration
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
-app.UseAuthorization();
+
 app.UseRateLimiter();
 app.MapControllers();
 
