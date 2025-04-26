@@ -2,6 +2,6 @@
 {
     public class PurchaseOrder : Order
     {
-        public IEnumerable<PurchaseOrderLine>? PurchaseOrderLines { get; set; }
+        public List<PurchaseOrderLine>? PurchaseOrderLines { get; set; }
     }
 }

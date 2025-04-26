@@ -37,10 +37,10 @@ namespace GAC.WMS.Api.Controllers
             return await _customerService.CreateAsync(dto, cancellationToken);
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] CustomerDto dto,CancellationToken cancellationToken)
+        [HttpPut]
+        public async Task<CustomerDto> Put([FromBody] CustomerDto dto,CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _customerService.UpdateAsync(dto, cancellationToken);
         }
 
         [HttpDelete("{id}")]

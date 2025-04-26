@@ -15,9 +15,9 @@ namespace GAC.WMS.Api.Controllers
         }
 
         [HttpPost]
-        public string Post([FromBody] LoginDto dto, CancellationToken cancellationToken)
+        public Task<string> Post([FromBody] LoginDto dto, CancellationToken cancellationToken)
         {
-            return _authService.Authenticate(dto, cancellationToken);
+            return _authService.AuthenticateAsync(dto, cancellationToken);
         }
     }
 }

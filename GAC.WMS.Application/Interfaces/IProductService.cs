@@ -9,6 +9,7 @@ namespace GAC.WMS.Application.Interfaces
         Task<ProductDto?> GetByNameAsync(string name, CancellationToken cancellationToken);
         Task<ProductDto?> GetByCodeAsync(string code, CancellationToken cancellationToken);
         Task<ProductDto> CreateAsync(ProductDto dto, CancellationToken cancellationToken);
+        Task<ProductDto> UpdateAsync(ProductDto dto, CancellationToken cancellationToken);
         Task<bool> DeleteAsync(int id, CancellationToken cancellationToken);
     }
 }

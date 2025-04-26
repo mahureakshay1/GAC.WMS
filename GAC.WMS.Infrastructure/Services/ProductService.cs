@@ -5,6 +5,7 @@ using GAC.WMS.Domain.Entities;
 using GAC.WMS.Domain.Exceptions;
 using GAC.WMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace GAC.WMS.Infrastructure.Services
 {
@@ -13,11 +14,13 @@ namespace GAC.WMS.Infrastructure.Services
         private readonly AppDbContext _dbContext;
         private readonly IValidatorService<ProductDto> _validator;
         private readonly IMapper _mapper;
-        public ProductService(AppDbContext dbContext, IMapper mapper, IValidatorService<ProductDto> validator)
+        private readonly ILogger<IProductService> _logger;
+        public ProductService(AppDbContext dbContext, IMapper mapper, IValidatorService<ProductDto> validator,ILogger<IProductService> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _validator = validator;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<ProductDto>> GetAllAsync(CancellationToken cancellationToken)
@@ -36,17 +39,19 @@ namespace GAC.WMS.Infrastructure.Services
                  .FirstOrDefaultAsync(cancellationToken);
             if (res == null)
                 throw new ItemNotFoundException(code);
+            _logger.LogInformation($"Product with Code {code} found successfully.");
             return res;
         }
 
         public async Task<ProductDto?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
-            var res= await _dbContext.Set<Product>()
+            var res = await _dbContext.Set<Product>()
                  .Where(p => p.Id == id)
                  .Select(c => _mapper.Map<ProductDto>(c))
                  .FirstOrDefaultAsync(cancellationToken);
             if (res == null)
                 throw new ItemNotFoundException(id);
+            _logger.LogInformation($"Product with ID {id} found successfully.");
             return res;
         }
 
@@ -58,6 +63,7 @@ namespace GAC.WMS.Infrastructure.Services
                 .FirstOrDefaultAsync(cancellationToken);
             if (res == null)
                 throw new ItemNotFoundException(name);
+            _logger.LogInformation($"Product with Name {name} found successfully.");
             return res;
         }
         public async Task<ProductDto> CreateAsync(ProductDto dto, CancellationToken cancellationToken)
@@ -66,6 +72,21 @@ namespace GAC.WMS.Infrastructure.Services
             var entity = _mapper.Map<Product>(dto);
             _dbContext.Set<Product>().Add(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation($"Product with ID {entity.Id} created successfully.");
+            return _mapper.Map<ProductDto>(entity);
+        }
+
+        public async Task<ProductDto> UpdateAsync(ProductDto dto, CancellationToken cancellationToken)
+        {
+            var entity = _mapper.Map<Product>(dto);
+            var existingEntity = await _dbContext.Set<Product>().FindAsync(new object[] { entity.Id }, cancellationToken);
+            if (existingEntity == null)
+                throw new ItemNotFoundException(dto.Id);
+
+            _dbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
+            _dbContext.Set<Product>().Update(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation($"Product with ID {entity.Id} updated successfully.");
             return _mapper.Map<ProductDto>(entity);
         }
 
@@ -76,6 +97,7 @@ namespace GAC.WMS.Infrastructure.Services
                 throw new ItemNotFoundException(id);
             _dbContext.Set<Product>().Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation($"Product with ID {id} deleted successfully.");
             return true;
         }
     }

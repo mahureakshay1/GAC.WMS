@@ -5,15 +5,15 @@
   <PurchaseOrderLines>
     <PurchaseOrderLine>
       <ProductId>1</ProductId>
-      <Quantity>20</Quantity>
-      <UnitPrice>50.00</UnitPrice>
-      <TotalPrice>1000.00</TotalPrice>
+      <Quantity>30</Quantity>
+      <UnitPrice>500.00</UnitPrice>
+      <TotalPrice>1500.00</TotalPrice>
     </PurchaseOrderLine>
     <PurchaseOrderLine>
       <ProductId>2</ProductId>
-      <Quantity>20</Quantity>
-      <UnitPrice>75.00</UnitPrice>
-      <TotalPrice>1500.00</TotalPrice>
+      <Quantity>300</Quantity>
+      <UnitPrice>100.00</UnitPrice>
+      <TotalPrice>3000.00</TotalPrice>
     </PurchaseOrderLine>
   </PurchaseOrderLines>
 </PurchaseOrder>

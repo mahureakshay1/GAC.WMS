@@ -1,11 +1,11 @@
 using GAC.WMS.Application;
-using GAC.WMS.Infrastructure;
 using GAC.WMS.Api.Middleware;
 using Hangfire;
 using GAC.WMS.Infrastructure.Job;
 using GAC.WMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using GAC.WMS.Infrastructure.ServiceExtension;
 
 
 var builder = WebApplication.CreateBuilder(args);

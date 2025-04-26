@@ -1,6 +1,10 @@
-﻿using GAC.WMS.Application.DTOs;
+﻿using GAC.WMS.Application.Common.IntegrationOptions;
+using GAC.WMS.Application.DTOs;
+using GAC.WMS.Application.Interfaces;
 using GAC.WMS.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace GAC.WMS.UnitTests.Application.Tests
@@ -8,8 +12,11 @@ namespace GAC.WMS.UnitTests.Application.Tests
     [TestClass]
     public class AuthServiceTests
     {
-        private Mock<IConfiguration> _configurationMock;
-        private AuthService _authService;
+        private Mock<IConfiguration> _configurationMock = null!;
+        private IAuthService _authService = null!;
+        private Mock<ILogger<IAuthService>> _loggerMock = null!;
+        private Mock<IOptions<JwtIntegrationOptions>> _jwtOptionsMock = null!;
+        private Mock<IOptions<ApplicationIntegrationOptions>> _applicationOptionsMock = null!;
 
         [TestInitialize]
         public void Setup()
@@ -19,12 +26,39 @@ namespace GAC.WMS.UnitTests.Application.Tests
             _configurationMock.Setup(config => config["JwtSettings:Secret"]).Returns("Super_Secret_Key_that_is_use_to_sign_token_12345");
             _configurationMock.Setup(config => config["JwtSettings:Issuer"]).Returns("TestIssuer");
             _configurationMock.Setup(config => config["JwtSettings:Audience"]).Returns("TestAudience");
+            _loggerMock = new Mock<ILogger<IAuthService>>();
 
-            _authService = new AuthService(_configurationMock.Object);
+
+
+
+            _applicationOptionsMock = new Mock<IOptions<ApplicationIntegrationOptions>>();
+            _applicationOptionsMock.Setup(o => o.Value).Returns(new ApplicationIntegrationOptions
+            {
+                Username = "admin",
+                Password = "admin",
+                Url = "http://localhost:5000",
+                Port = "5000",
+            });
+
+            _jwtOptionsMock = new Mock<IOptions<JwtIntegrationOptions>>();
+            _jwtOptionsMock.Setup(x => x.Value).Returns(new JwtIntegrationOptions
+            {
+                Audience = "TestAudience",
+                Issuer = "TestIssuer",
+                ExpirationInMinutes = 60,
+                RequireExpirationTime = true,
+                Secret = "Super_Secret_Key_that_is_use_to_sign_token_12345",
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true,
+                ValidateAudience = true,
+                ValidateLifetime = true
+            });
+
+            _authService = new AuthService(_jwtOptionsMock.Object, _applicationOptionsMock.Object, _loggerMock.Object);
         }
 
         [TestMethod]
-        public void Authenticate_ShouldReturnJwtToken_WhenCredentialsAreValid()
+        public async Task Authenticate_ShouldReturnJwtToken_WhenCredentialsAreValid()
         {
             var loginDto = new LoginDto
             {
@@ -33,7 +67,7 @@ namespace GAC.WMS.UnitTests.Application.Tests
             };
             var cancellationToken = CancellationToken.None;
 
-            var token = _authService.Authenticate(loginDto, cancellationToken);
+            var token = await _authService.AuthenticateAsync(loginDto, cancellationToken);
 
             Assert.IsNotNull(token);
             Assert.IsInstanceOfType(token, typeof(string));
@@ -41,8 +75,7 @@ namespace GAC.WMS.UnitTests.Application.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(UnauthorizedAccessException))]
-        public void Authenticate_ShouldThrowUnauthorizedAccessException_WhenCredentialsAreInvalid()
+        public async Task Authenticate_ShouldThrowUnauthorizedAccessException_WhenCredentialsAreInvalid()
         {
             var loginDto = new LoginDto
             {
@@ -51,7 +84,7 @@ namespace GAC.WMS.UnitTests.Application.Tests
             };
             var cancellationToken = CancellationToken.None;
 
-            _authService.Authenticate(loginDto, cancellationToken);
+            await Assert.ThrowsExceptionAsync<UnauthorizedAccessException>(() => _authService.AuthenticateAsync(loginDto, cancellationToken));
         }
     }
 }

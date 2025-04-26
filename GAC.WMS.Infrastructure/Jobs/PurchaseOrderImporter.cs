@@ -1,6 +1,7 @@
-﻿using GAC.WMS.Application.Common.IntegrationModels;
+﻿using GAC.WMS.Application.Common.IntegrationOptions;
 using GAC.WMS.IntegrationEngine.Dispatcher;
 using Hangfire;
+using Microsoft.Extensions.Options;
 
 namespace GAC.WMS.Infrastructure.Job
 {
@@ -8,10 +9,10 @@ namespace GAC.WMS.Infrastructure.Job
     {
         private readonly IntegrationDispatcher _dispatcher;
         private readonly FileIntegrationOptions _fileOptions;
-        public PurchaseOrderImporter(IntegrationDispatcher dispatcher, FileIntegrationOptions fileOptions)
+        public PurchaseOrderImporter(IntegrationDispatcher dispatcher, IOptions<FileIntegrationOptions> fileOptions)
         {
             _dispatcher = dispatcher;
-            _fileOptions = fileOptions;
+            _fileOptions = fileOptions.Value;
         }
 
         [AutomaticRetry(Attempts = 3, OnAttemptsExceeded = AttemptsExceededAction.Fail)]

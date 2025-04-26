@@ -4,6 +4,8 @@ using GAC.WMS.Application.Common.IntegrationModels;
 using GAC.WMS.Application.Dtos;
 using GAC.WMS.Application.Interfaces.External;
 using Microsoft.Extensions.Logging;
+using System.Security;
+using System.Xml;
 using System.Xml.Serialization;
 namespace GAC.WMS.Infrastructure.FileParsers
 {
@@ -12,14 +14,13 @@ namespace GAC.WMS.Infrastructure.FileParsers
         private readonly IMapper _mapper;
         private readonly IGacWmsClient _gacClient;
         private readonly ILogger<XmlPurchaseOrderHandler> _logger;
-        private static readonly object _fileLock = new object();
+        private static readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         public XmlPurchaseOrderHandler(IMapper mapper, IGacWmsClient gacClient, ILogger<XmlPurchaseOrderHandler> logger)
         {
             _mapper = mapper;
             _gacClient = gacClient;
             _logger = logger;
         }
-
 
         public bool CanHandleAsync(string filePath)
         {
@@ -32,7 +33,7 @@ namespace GAC.WMS.Infrastructure.FileParsers
             {
                 var result = await _gacClient.PostPurchaseOrderAsync(await ReadFileAsync(filePath));
                 if (!result.IsSuccessStatusCode)
-                    HandleError(filePath, await result.Content.ReadAsStringAsync());
+                    HandleError(filePath, await result.Content.ReadAsStringAsync(cancellationToken));
                 else
                     HandleSuccess(filePath);
             }
@@ -55,12 +56,19 @@ namespace GAC.WMS.Infrastructure.FileParsers
 
         public void HandleError(string filePath, string errorMessage)
         {
-
-            string fileDirectory = Path.GetDirectoryName(filePath);
-            string fileName = Path.GetFileName(filePath);
-            string errorDir = Path.Combine(fileDirectory, "Error");
-            lock (_fileLock)
+            _lock.Wait();
+            try
             {
+                string fileDirectory = Path.GetDirectoryName(filePath) ??
+                                        throw new InvalidCastException($"The directory for the file path '{filePath}' could not be determined.");
+                string fileName = Path.GetFileName(filePath);
+                string errorDir = Path.Combine(fileDirectory, "Error");
+                var xmlDocument = new XmlDocument();
+                xmlDocument.Load(filePath);
+                var comment = xmlDocument.CreateComment($"Error: {SecurityElement.Escape(errorMessage)}");
+                xmlDocument.DocumentElement?.AppendChild(comment);
+                xmlDocument.Save(filePath);
+
                 if (!Directory.Exists(errorDir))
                 {
                     Directory.CreateDirectory(errorDir);
@@ -68,22 +76,32 @@ namespace GAC.WMS.Infrastructure.FileParsers
                 File.Move(filePath, Path.Combine(errorDir, fileName));
                 _logger.LogError(string.Format("File processing failed for file {0} :{1}", filePath, errorMessage));
             }
+            finally
+            {
+                _lock.Release();
+            }
         }
 
         public void HandleSuccess(string filePath)
         {
-            string fileDirectory = Path.GetDirectoryName(filePath);
-            string fileName = Path.GetFileName(filePath);
-            string archiveDir = Path.Combine(fileDirectory, "Success");
-            lock (_fileLock)
+            _lock.Wait();
+            try
             {
+                string fileDirectory = Path.GetDirectoryName(filePath) ??
+                                        throw new InvalidCastException($"The directory for the file path '{filePath}' could not be determined.");
+                string fileName = Path.GetFileName(filePath);
+                string archiveDir = Path.Combine(fileDirectory, "Success");
                 if (!Directory.Exists(archiveDir))
                 {
                     Directory.CreateDirectory(archiveDir);
                 }
                 File.Move(filePath, Path.Combine(archiveDir, fileName));
+                _logger.LogInformation(string.Format("File processing done for file {0}", filePath));
             }
-            _logger.LogInformation(string.Format("File processing done for file {0}", filePath));
+            finally
+            {
+                _lock.Release();
+            }
         }
     }
 }

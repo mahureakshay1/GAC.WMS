@@ -1,4 +1,4 @@
-﻿namespace GAC.WMS.Application.Common.IntegrationModels
+﻿namespace GAC.WMS.Application.Common.IntegrationOptions
 {
     public class CustomerFileIntegrationConfig
     {
@@ -7,7 +7,7 @@
         public string? Type { get; set; }
         
     }
-
+    
     public class FileIntegrationOptions
     {
         public required string CronExpression { get; set; }

@@ -35,10 +35,10 @@ namespace GAC.WMS.Api.Controllers
             return await _purchaseOrderService.CreateAsync(dto, cancellationToken);
         }
 
-        [HttpPut("{id}")]
-        public async Task<PurchaseOrderDto> Put(int id, [FromBody] PurchaseOrderDto dto, CancellationToken cancellationToken)
+        [HttpPut]
+        public async Task<PurchaseOrderDto> Put([FromBody] PurchaseOrderDto dto, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _purchaseOrderService.UpdateAsync(dto, CancellationToken.None);
         }
 
         [HttpDelete("{id}")]

@@ -4,6 +4,6 @@ namespace GAC.WMS.Application.Interfaces
 {
     public interface IAuthService
     {
-        public string Authenticate(LoginDto loginModel, CancellationToken cancellationToken);
+        public Task<string> AuthenticateAsync(LoginDto loginModel, CancellationToken cancellationToken);
     }
 }

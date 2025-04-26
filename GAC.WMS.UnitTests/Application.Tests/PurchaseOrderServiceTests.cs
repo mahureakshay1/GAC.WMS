@@ -6,6 +6,7 @@ using GAC.WMS.Domain.Exceptions;
 using GAC.WMS.Infrastructure.Persistence;
 using GAC.WMS.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace GAC.WMS.UnitTests.Application.Tests
@@ -13,10 +14,11 @@ namespace GAC.WMS.UnitTests.Application.Tests
     [TestClass]
     public class PurchaseOrderServiceTests
     {
-        private AppDbContext _dbContext;
-        private Mock<IMapper> _mapperMock;
-        private Mock<IValidatorService<PurchaseOrderDto>> _validatorMock;
-        private PurchaseOrderService _purchaseOrderService;
+        private AppDbContext _dbContext = null!;
+        private Mock<IMapper> _mapperMock = null!;
+        private Mock<IValidatorService<PurchaseOrderDto>> _validatorMock = null!;
+        private IPurchaseOrderService _purchaseOrderService = null!;
+        private Mock<ILogger<IPurchaseOrderService>> _loggerMock = null!;
 
         [TestInitialize]
         public void Setup()
@@ -28,7 +30,8 @@ namespace GAC.WMS.UnitTests.Application.Tests
             _dbContext = new AppDbContext(options);
             _mapperMock = new Mock<IMapper>();
             _validatorMock = new Mock<IValidatorService<PurchaseOrderDto>>();
-            _purchaseOrderService = new PurchaseOrderService(_dbContext, _mapperMock.Object, _validatorMock.Object);
+            _loggerMock = new Mock<ILogger<IPurchaseOrderService>>();
+            _purchaseOrderService = new PurchaseOrderService(_dbContext, _mapperMock.Object, _validatorMock.Object, _loggerMock.Object);
         }
 
         [TestCleanup]
@@ -161,7 +164,7 @@ namespace GAC.WMS.UnitTests.Application.Tests
                     CustomerId = 1,
                     PurchaseOrderLines = new List<PurchaseOrderLineDto>()
                     {
-                        new PurchaseOrderLineDto()
+                        new ()
                         {
                             Id = 1,
                             ProductId = 1,
@@ -197,7 +200,7 @@ namespace GAC.WMS.UnitTests.Application.Tests
                 CustomerId = 1,
                 PurchaseOrderLines = new List<PurchaseOrderLineDto>()
                     {
-                        new PurchaseOrderLineDto()
+                        new ()
                         {
                             Id = 1,
                             ProductId = 1,
@@ -228,6 +231,7 @@ namespace GAC.WMS.UnitTests.Application.Tests
             Assert.AreEqual(1, result.CustomerId);
         }
 
+
         [TestMethod]
         public async Task DeleteAsync_ShouldReturnTrue_WhenPurchaseOrderExists()
         {
@@ -236,7 +240,7 @@ namespace GAC.WMS.UnitTests.Application.Tests
             {
                 Id = 1,
                 CustomerId = 1,
-                Customer = new Customer()
+                Customer = new ()
                 {
                     Address = "Pune",
                     CompanyName = "Customer A",

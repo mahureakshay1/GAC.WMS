@@ -5,6 +5,7 @@ using GAC.WMS.Domain.Entities;
 using GAC.WMS.Domain.Exceptions;
 using GAC.WMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace GAC.WMS.Infrastructure.Services
 {
@@ -13,11 +14,13 @@ namespace GAC.WMS.Infrastructure.Services
         private readonly AppDbContext _dbContext;
         private readonly IValidatorService<PurchaseOrderDto> _validator;
         private readonly IMapper _mapper;
-        public PurchaseOrderService(AppDbContext dbContext, IMapper mapper, IValidatorService<PurchaseOrderDto> validator)
+        private readonly ILogger<IPurchaseOrderService> _logger;
+        public PurchaseOrderService(AppDbContext dbContext, IMapper mapper, IValidatorService<PurchaseOrderDto> validator , ILogger<IPurchaseOrderService> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _validator = validator;
+            _logger = logger;
         }
         public async Task<IEnumerable<PurchaseOrderDto>> GetAllAsync(CancellationToken cancellationToken)
         {
@@ -35,6 +38,7 @@ namespace GAC.WMS.Infrastructure.Services
                 .FirstOrDefaultAsync(cancellationToken);
             if (res == null)
                 throw new ItemNotFoundException(id);
+            _logger.LogInformation($"PurchaseOrder with ID {id} found successfully.");
             return res;
         }
         public async Task<IEnumerable<PurchaseOrderDto>> GetByCustomerNameAsync(string name, CancellationToken cancellationToken)
@@ -46,6 +50,7 @@ namespace GAC.WMS.Infrastructure.Services
                 .ToListAsync(cancellationToken);
             if (res.Count == 0)
                 throw new ItemNotFoundException(name);
+            _logger.LogInformation($"PurchaseOrder with Customer Name {name} found successfully.");
             return res;
         }
         public async Task<PurchaseOrderDto> CreateAsync(PurchaseOrderDto dto, CancellationToken cancellationToken)
@@ -54,8 +59,45 @@ namespace GAC.WMS.Infrastructure.Services
             var entity = _mapper.Map<PurchaseOrder>(dto);
             _dbContext.Set<PurchaseOrder>().Add(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation($"PurchaseOrder with ID {entity.Id} created successfully.");
             return _mapper.Map<PurchaseOrderDto>(entity);
         }
+
+        public async Task<PurchaseOrderDto> UpdateAsync(PurchaseOrderDto dto, CancellationToken cancellationToken)
+        {
+            var entity = _mapper.Map<PurchaseOrder>(dto);
+            var existingEntity = await _dbContext.Set<PurchaseOrder>().FindAsync(new object[] { entity.Id }, cancellationToken);
+            if (existingEntity == null)
+                throw new ItemNotFoundException(dto.Id);
+
+            _dbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
+
+            if (entity.PurchaseOrderLines != null)
+                foreach (var line in entity.PurchaseOrderLines)
+                {
+                    var existingLine = existingEntity.PurchaseOrderLines?.FirstOrDefault(l => l.Id == line.Id);
+                    if (existingLine != null)
+                    {
+                        _dbContext.Entry(existingLine).CurrentValues.SetValues(line);
+                    }
+                    else
+                    {
+                        existingEntity.PurchaseOrderLines?.Add(line);
+                    }
+                }
+            if (existingEntity.PurchaseOrderLines != null)
+                foreach (var line in existingEntity.PurchaseOrderLines)
+                {
+                    if (entity.PurchaseOrderLines != null && !entity.PurchaseOrderLines.Any(l => l.Id == line.Id))
+                    {
+                        _dbContext.Set<PurchaseOrderLine>().Remove(line);
+                    }
+                }
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation($"PurchaseOrder with ID {entity.Id} updated successfully.");
+            return _mapper.Map<PurchaseOrderDto>(existingEntity);
+        }
+
         public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
         {
             var entity = await _dbContext.Set<PurchaseOrder>().FindAsync(new object[] { id }, cancellationToken);
@@ -63,6 +105,7 @@ namespace GAC.WMS.Infrastructure.Services
                 throw new ItemNotFoundException(id);
             _dbContext.Set<PurchaseOrder>().Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation($"PurchaseOrder with ID {id} deleted successfully.");
             return true;
         }
     }
