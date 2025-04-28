@@ -38,31 +38,7 @@ namespace GAC.WMS.Infrastructure.ServiceExtension
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(jwtKey),
                 };
-                jwtOptions.Events = new JwtBearerEvents
-                {
-                    OnAuthenticationFailed = context =>
-                    {
-                        context.Response.StatusCode = 401;
-                        Console.WriteLine($"JWT Auth failed: {context.Exception.Message}");
-                        return Task.CompletedTask;
-                    },
-                    OnTokenValidated = context =>
-                    {
-                        Console.WriteLine("JWT Token validated successfully.");
-                        return Task.CompletedTask;
-                    },
-                    OnMessageReceived = context =>
-                    {
-                        Console.WriteLine("Token received.");
-                        return Task.CompletedTask;
-                    },
-                    OnChallenge = context =>
-                    {
-                        Console.WriteLine("JWT Challenge triggered.");
-                        return Task.CompletedTask;
-                    }
-                };
-
+                
             });
             services.AddAuthorization(options =>
             {

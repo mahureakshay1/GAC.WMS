@@ -89,9 +89,9 @@ git clone https://github.com/mahureakshay1/GAC.WMS.git
    - Deploy the API
 8. Check docker containers **gacwms-db-1** and **gacwms-srver-1** is running or not if not running, run manually.
 9. If both containers are running, verify xml files are processed, that are copied in step 5.
-   - Go to path "C:\SharedFolder\Customer1\" files should be moved to **Success** folder if processed succusfully or **Error** folder.
+   - Go to path "C:\SharedFolder\Customer1\" files should be moved to **Success** folder if processed succusfully or **Error** folder with Error message added in file as comment.
    - Logs information is available in **gacwms-srver-1** container log.
-10. Closing powershell window will stop container.
+
 
 ---
 
@@ -109,7 +109,7 @@ git clone https://github.com/mahureakshay1/GAC.WMS.git
 ```json
 {
   // Application section is use by Cron job for import 
-  "Application": {
+  "ApplicationIntegrationOptions": {
     "Url": "http://localhost",
     "Port": 8080, // change port number to 44352 if running using visual studio
     "Username": "admin",
@@ -118,18 +118,28 @@ git clone https://github.com/mahureakshay1/GAC.WMS.git
   "ConnectionStrings": {
     "DefaultConnection": "Server=<SERVER_NAME>;Database=GacWms;User Id=sa;Password=<PASSWORD>;TrustServerCertificate=True;"
   },
-  "JwtSettings": {
+  // jwt configuration
+  "JwtIntegrationOptions": {
     "Secret": "OgCOPWBPWideOqs-gmHPqjb6eJkxezLnF0mKZmG-r0o=",
     "Issuer": "localhost",
     "Audience": "localhost",
     "ExpiresInMinutes": 60
   },
-  "FileIntegration": {
+  "FileIntegrationOptions": {
     "CronExpression": "<CRON_EXPRESSION>",
     "Customers": [
       { "Name": "Customer1", "Path": "/app/shared/Customer1" }, // Change this path \\<SERVER>\SharedFolder\Customer1 to if running on visual studio
       { "Name": "Customer2", "Path": "/app/shared/Customer2" }, // Change this path \\<SERVER>\SharedFolder\Customer1to if running on visual studio
     ]
+  },
+  // Rate limiter configuration
+  "RateLimiterIntegrationOptions": {
+    "TokenLimit": 10,
+    "TokensPerPeriod": 1,
+    "ReplenishmentPeriod": 2,
+    "QueueLimit": 10,
+    "QueueProcessingOrder": "FIFO",
+    "AutoReplenishment": true
   }
 }
 ```
