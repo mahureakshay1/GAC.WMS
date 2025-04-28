@@ -3,7 +3,7 @@ using GAC.WMS.Application.Dtos;
 
 namespace GAC.WMS.Application.Validators
 {
-    public class SaleOrderDtoValidator : AbstractValidator<SellOrderDto>
+    public class SaleOrderDtoValidator : AbstractValidator<SaleOrderDto>
     {
         public SaleOrderDtoValidator()
         {

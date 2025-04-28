@@ -10,7 +10,7 @@ namespace GAC.WMS.Application.MappingProfiles
         {
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<Customer, CustomerDto>().ReverseMap();
-            CreateMap<SaleOrder, SellOrderDto>()
+            CreateMap<SaleOrder, SaleOrderDto>()
                 .ForMember(dest => dest.SaleOrderLines, opt =>
                     opt.MapFrom(src => src.SaleOrderLines))
                 .ReverseMap();

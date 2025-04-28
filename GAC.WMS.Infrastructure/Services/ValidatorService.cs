@@ -17,5 +17,15 @@ namespace GAC.WMS.Infrastructure.Services
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
         }
+
+        public async Task ValidateAsync(IEnumerable<T> instanceList, CancellationToken cancellationToken)
+        {
+            foreach (var item in instanceList)
+            {
+                var result = await _validator.ValidateAsync(item, cancellationToken);
+                if (!result.IsValid)
+                    throw new ValidationException(result.Errors);
+            }
+        }
     }
 }

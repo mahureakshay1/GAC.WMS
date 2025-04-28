@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 using System.Threading.RateLimiting;
 
 namespace GAC.WMS.Infrastructure.ServiceExtension
@@ -22,6 +23,7 @@ namespace GAC.WMS.Infrastructure.ServiceExtension
                                         QueueProcessingOrder.OldestFirst : QueueProcessingOrder.NewestFirst;
                     limiterOptions.AutoReplenishment = rateIntegrationOptions.AutoReplenishment;
                 });
+                options.RejectionStatusCode = (int)HttpStatusCode.TooManyRequests;
             });
 
             return services;

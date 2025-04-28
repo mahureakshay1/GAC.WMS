@@ -27,7 +27,9 @@ namespace GAC.WMS.Application.Validators
                 .NotEmpty()
                 .WithMessage("Total price is required.")
                 .GreaterThan(0)
-                .WithMessage("Total price must be greater than 0.");
+                .WithMessage("Total price must be greater than 0.")
+                .Equal(x => x.Quantity * x.UnitPrice)
+                .WithMessage("Total price must be equal to Quantity * Unit Price.");
         }
     }
 }
